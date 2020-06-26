@@ -8,7 +8,7 @@
 
   tasks:
   - name: Get existing portfolios
-    command: curl -u "{{ username }}:{{ password }} -X GET "https://cloud.redhat.com//api/catalog/v1.1/portfolios?limit=100" -H  "accept: application/json"
+    command: curl -u "{{ username }}:{{ password }}" -X GET "https://cloud.redhat.com//api/catalog/v1.1/portfolios?limit=100" -H  "accept: application/json"
     register: portfolios
 
   - name: List portfolios
