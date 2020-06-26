@@ -7,9 +7,20 @@
     password: password
 
   tasks:
+    #  - name: Get existing portfolios
+    #    shell: curl -u "{{ username }}:{{ password }}" -X GET "https://cloud.redhat.com//api/catalog/v1.1/portfolios?limit=100" -H  "accept: application/json"
+    #    register: portfolios
+
   - name: Get existing portfolios
-    shell: curl -u "{{ username }}:{{ password }}" -X GET "https://cloud.redhat.com//api/catalog/v1.1/portfolios?limit=100" -H  "accept: application/json"
+    uri:
+      url: https://cloud.redhat.com//api/catalog/v1.1/portfolios?limit=100
+      user: "{{ username }}"
+      password: "{{ password }}"
+      force_basic_auth: true
+      method: GET
+      headers: "accept: application/json"
     register: portfolios
+
 
   - name: List portfolios
     debug:
