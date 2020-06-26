@@ -18,7 +18,7 @@
       password: "{{ password }}"
       force_basic_auth: true
       method: GET
-      headers: "accept: application/json"
+      headers: accept: application/json
     register: portfolios
 
 
