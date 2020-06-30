@@ -1,7 +1,6 @@
 ---
 - name: Create Automation Service Catalog demo
-  hosts: localhost
-  become: false
+  hosts: localhost become: false
   vars:
     username: username
     password: password
@@ -39,7 +38,7 @@
 
   - name: Dump "Catalog Administrators" role 
     debug:
-      msg: "{{ catalogAdminRole.json.data }}"
+      msg: "{{ catalogAdminRole }}"
 
   - name: Dump "Catalog Administrators" role UUID
     debug:
