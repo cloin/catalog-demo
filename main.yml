@@ -37,6 +37,10 @@
         accept: "application/json"
     register: catalogAdminRole
 
-  - name: Dump "Catalog Administrators" role UUI
+  - name: Dump "Catalog Administrators" role 
+    debug:
+      msg: "{{ catalogAdminRole.json.data }}"
+
+  - name: Dump "Catalog Administrators" role UUID
     debug:
       msg: "{{ catalogAdminRole.json.data.uuid }}"
