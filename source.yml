@@ -36,7 +36,7 @@
 
   - name: Get source
     uri:
-      url: https://cloud.redhat.com//api/sources/v1.0/source_types/3/sources?limit=100&filter[name]={{ source_name }}
+      url: https://cloud.redhat.com//api/sources/v1.0/source_types/3/sources?limit=100&filter[name]={{ source_name | urlencode }}
       user: "{{ username }}"
       password: "{{ password }}"
       force_basic_auth: true
