@@ -39,3 +39,4 @@
         description: "A group of catalog admins created for demo purposes"
     register: createGroup
     changed_when: "createGroup.status == 201"
+    failed_when: "createGroup.status == 400"
