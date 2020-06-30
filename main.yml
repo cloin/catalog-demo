@@ -36,3 +36,7 @@
       headers: 
         accept: "application/json"
     register: catalogAdminRole
+
+  - name: Dump "Catalog Administrators" role UUI
+    debug:
+      var: "{{ catalogAdminRole.data.uuid }}"
