@@ -33,3 +33,42 @@
       - "createSource.status == 401"
       - "createSource.status == 403"
       - "createSource.status == 500"
+
+  - name: Get source
+    uri:
+      url: https://cloud.redhat.com//api/sources/v1.0/source_types/3/sources?limit=100&filter[name]={{ source_name }}
+      user: "{{ username }}"
+      password: "{{ password }}"
+      force_basic_auth: true
+      method: POST
+      headers: 
+        accept: "application/json"
+    register: source
+    failed_when:
+      - "source.status == 404"
+
+  - name: dumb source var
+    debug:
+      var: source
+
+  - name: Create application
+    uri:
+      url: https://cloud.redhat.com//api/sources/v1.0/applications
+      user: "{{ username }}"
+      password: "{{ password }}"
+      force_basic_auth: true
+      method: POST
+      headers: 
+        accept: "application/json"
+      body_format: json
+      body:
+        availability_status: "available"
+        availability_status_error: "string"
+        source_id: "{{ source.json.data[0].id }}"
+        application_type_id: "1"
+    register: createApplication
+    changed_when: "createApplication.status == 201"
+    failed_when:
+      - "createApplication.status == 401"
+      - "createApplication.status == 403"
+      - "createApplication.status == 500"
