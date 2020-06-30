@@ -72,3 +72,28 @@
       - "createApplication.status == 401"
       - "createApplication.status == 403"
       - "createApplication.status == 500"
+
+  - name: Create endpoint
+    uri:
+      url: https://cloud.redhat.com//api/sources/v1.0/endpoints
+      user: "{{ username }}"
+      password: "{{ password }}"
+      force_basic_auth: true
+      method: POST
+      headers: 
+        accept: "application/json"
+      body_format: json
+      body:
+        host: "{{ tower_url }}"
+        path: "/"
+        port: "80"
+        role: "ansible"
+        scheme: "https"
+        verify_ssl: false
+        source_id: "{{ source.json.data[0].id }}"
+    register: createEndpoint
+    changed_when: "createEndpoint.status == 201"
+    failed_when:
+      - "createEndpoint.status == 401"
+      - "createEndpoint.status == 403"
+      - "createEndpoint.status == 500"
