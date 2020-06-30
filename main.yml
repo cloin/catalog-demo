@@ -9,21 +9,6 @@
 
   tasks:
 
-#  - name: Get existing portfolios
-#    uri:
-#      url: https://cloud.redhat.com//api/catalog/v1.1/portfolios?limit=100
-#      user: "{{ username }}"
-#      password: "{{ password }}"
-#      force_basic_auth: true
-#      method: GET
-#      headers: 
-#        accept: "application/json"
-#    register: portfolios
-#
-#  - name: List portfolios
-#    debug:
-#      var: "{{ portfolios }}"
-
   - name: Create catalog admins group 
     uri:
       url: https://cloud.redhat.com/api/rbac/v1/groups/
@@ -40,3 +25,14 @@
     register: createGroup
     changed_when: "createGroup.status == 201"
     failed_when: "createGroup.status == 400"
+
+  - name: Get "Catalog Administrators" role
+    uri:
+      url: https://cloud.redhat.com/api/rbac/v1/roles/?limit=10&name=Catalog%20Administrator&scope=account&add_fields=groups_in
+      user: "{{ username }}"
+      password: "{{ password }}"
+      force_basic_auth: true
+      method: GET
+      headers: 
+        accept: "application/json"
+    register: catalogAdminRole
