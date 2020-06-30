@@ -39,20 +39,20 @@
         accept: "application/json"
     register: catalogAdminRole
 
-#  - name: Add "Catalog Administrators" role to {{ catalog_admin_group }} 
-#    uri:
-#      url: https://cloud.redhat.com/api/rbac/v1/groups/
-#      user: "{{ username }}"
-#      password: "{{ password }}"
-#      force_basic_auth: true
-#      method: POST
-#      headers: 
-#        accept: "application/json"
-#      body_format: json
-#      body:
-#        name: "{{ catalog_admin_group }}"
-#        description: "A group of catalog admins created for demo purposes"
-#    register: createGroup
+  - name: Add "Catalog Administrators" role to {{ catalog_admin_group }} 
+    uri:
+      url: https://cloud.redhat.com/api/rbac/v1/groups/{{ catalog_admin_group.json.uuid }}/roles
+      user: "{{ username }}"
+      password: "{{ password }}"
+      force_basic_auth: true
+      method: POST
+      headers: 
+        accept: "application/json"
+      body_format: json
+      body:
+        roles:
+          - "{{ catlogAdminRole.json.data[0].uuid }}"
+    register: addRole
 
   - name: Dump "Catalog Administrators" role UUID
     debug:
