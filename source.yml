@@ -8,6 +8,7 @@
     username: 
     password: 
     source_name: testTower-1 
+    tower_url: 
 
   tasks:
 
@@ -97,3 +98,38 @@
       - "createEndpoint.status == 401"
       - "createEndpoint.status == 403"
       - "createEndpoint.status == 500"
+
+  - name: Get endpoint
+    uri:
+      url: https://cloud.redhat.com//api/sources/v1.0/endpoints?limit=5&filter[host]={{ tower_url }}
+      user: "{{ username }}"
+      password: "{{ password }}"
+      force_basic_auth: true
+      method: GET
+      headers: 
+        accept: "application/json"
+    register: endpoint
+
+  - name: Create authentication
+    uri:
+      url: https://cloud.redhat.com//api/sources/v1.0/authentications
+      user: "{{ username }}"
+      password: "{{ password }}"
+      force_basic_auth: true
+      method: POST
+      headers: 
+        accept: "application/json"
+      body_format: json
+      body:
+        authtype: "username_password"
+        name: "Tower Password"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        resource_type: "Endpoint"
+        resource_id: "{{ endpoint.json.data[0].id }}"
+    register: createAuthentication
+    changed_when: "createAuthentication.status == 201"
+    failed_when:
+      - "createAuthentication.status == 401"
+      - "createAuthentication.status == 403"
+      - "createAuthentication.status == 500"
