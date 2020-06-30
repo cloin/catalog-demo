@@ -5,24 +5,36 @@
   vars:
     username: username
     password: password
+    catalog_admin_group: CatalogAdmin-demo
 
   tasks:
-    #  - name: Get existing portfolios
-    #    shell: curl -u "{{ username }}:{{ password }}" -X GET "https://cloud.redhat.com//api/catalog/v1.1/portfolios?limit=100" -H  "accept: application/json"
-    #    register: portfolios
 
-  - name: Get existing portfolios
+#  - name: Get existing portfolios
+#    uri:
+#      url: https://cloud.redhat.com//api/catalog/v1.1/portfolios?limit=100
+#      user: "{{ username }}"
+#      password: "{{ password }}"
+#      force_basic_auth: true
+#      method: GET
+#      headers: 
+#        accept: "application/json"
+#    register: portfolios
+#
+#  - name: List portfolios
+#    debug:
+#      var: "{{ portfolios }}"
+
+  - name: Create catalog admins group 
     uri:
-      url: https://cloud.redhat.com//api/catalog/v1.1/portfolios?limit=100
+      url: https://cloud.redhat.com/api/rbac/v1/groups/
       user: "{{ username }}"
       password: "{{ password }}"
       force_basic_auth: true
-      method: GET
+      method: POST
       headers: 
         accept: "application/json"
+      body_format: json
+      body:
+        name: "{{ catalog_admin_group }}"
+        description: "A group of catalog admins created for demo purposes"
     register: portfolios
-
-
-  - name: List portfolios
-    debug:
-      var: "{{ portfolios }}"
