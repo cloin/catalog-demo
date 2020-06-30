@@ -29,3 +29,7 @@
         source_type_id: "3"
     register: createSource
     changed_when: "createSource.status == 201"
+    failed_when:
+      - "createSource.status == 401"
+      - "createSource.status == 403"
+      - "createSource.status == 500"
