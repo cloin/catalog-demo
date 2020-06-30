@@ -1,5 +1,5 @@
 ---
-- name: Create Automation Service Catalog demo
+- name: RBAC setup for Automation Services Catalog demo
   hosts: localhost 
   become: false
   gather_facts: false
