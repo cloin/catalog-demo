@@ -42,10 +42,6 @@
         accept: "application/json"
     register: adminGroup
 
-  - name: Dump var
-    debug:
-      var: adminGroup
-
   - name: Get "Catalog Administrators" role
     uri:
       url: https://cloud.redhat.com/api/rbac/v1/roles/?limit=10&name=Catalog%20Administrator&scope=account&add_fields=groups_in
