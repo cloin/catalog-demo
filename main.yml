@@ -43,4 +43,4 @@
 
   - name: Dump "Catalog Administrators" role UUID
     debug:
-      msg: "{{ catalogAdminRole.json.data | list }}"
+      msg: "{{ catalogAdminRole.json.data | select("uuid") }}"
