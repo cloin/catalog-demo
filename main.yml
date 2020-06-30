@@ -1,6 +1,7 @@
 ---
 - name: Create Automation Service Catalog demo
-  hosts: localhost become: false
+  hosts: localhost 
+  become: false
   vars:
     username: username
     password: password
