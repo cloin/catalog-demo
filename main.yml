@@ -37,4 +37,5 @@
       body:
         name: "{{ catalog_admin_group }}"
         description: "A group of catalog admins created for demo purposes"
-    register: portfolios
+    register: createGroup
+    changed_when: "createGroup.status == 201"
