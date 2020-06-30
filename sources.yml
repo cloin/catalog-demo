@@ -48,10 +48,6 @@
     failed_when:
       - "source.status == 404"
 
-  - name: dumb source var
-    debug:
-      var: source
-
   - name: Create application
     uri:
       url: https://cloud.redhat.com//api/sources/v1.0/applications
