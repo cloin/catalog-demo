@@ -9,22 +9,22 @@
 
   tasks:
 
-  - name: Create catalog admins group 
-    uri:
-      url: https://cloud.redhat.com/api/rbac/v1/groups/
-      user: "{{ username }}"
-      password: "{{ password }}"
-      force_basic_auth: true
-      method: POST
-      headers: 
-        accept: "application/json"
-      body_format: json
-      body:
-        name: "{{ catalog_admin_group }}"
-        description: "A group of catalog admins created for demo purposes"
-    register: createGroup
-    changed_when: "createGroup.status == 201"
-    failed_when: "createGroup.status == 400"
+#  - name: Create catalog admins group 
+#    uri:
+#      url: https://cloud.redhat.com/api/rbac/v1/groups/
+#      user: "{{ username }}"
+#      password: "{{ password }}"
+#      force_basic_auth: true
+#      method: POST
+#      headers: 
+#        accept: "application/json"
+#      body_format: json
+#      body:
+#        name: "{{ catalog_admin_group }}"
+#        description: "A group of catalog admins created for demo purposes"
+#    register: createGroup
+#    changed_when: "createGroup.status == 201"
+#    failed_when: "createGroup.status == 400"
 
   - name: Get "Catalog Administrators" role
     uri:
