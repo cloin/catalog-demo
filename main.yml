@@ -51,7 +51,7 @@
       body_format: json
       body:
         roles:
-          - "{{ catlogAdminRole.json.data[0].uuid }}"
+          - "{{ catalogAdminRole.json.data[0].uuid }}"
     register: addRole
 
   - name: Dump "Catalog Administrators" role UUID
