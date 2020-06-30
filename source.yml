@@ -24,7 +24,7 @@
       body:
         availability_status: available
         imported: string
-        name: {{ source_name }}
+        name: "{{ source_name }}"
         source_ref: string
         source_type_id: 3
     register: createSource
