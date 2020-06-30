@@ -31,6 +31,19 @@
       - "createGroup.status == 403"
       - "createGroup.status == 500"
 
+  - name: Get {{ catalog_admin_group }}
+    uri:
+      url: https://cloud.redhat.com/api/rbac/v1/groups/?limit=1&name=CatalogAdmin-demo&scope=account
+      user: "{{ username }}"
+      password: "{{ password }}"
+      force_basic_auth: true
+      method: GET
+      headers: 
+        accept: "application/json"
+    register: createGroup
+    when:
+      - createGroup is not changed
+
   - name: Get "Catalog Administrators" role
     uri:
       url: https://cloud.redhat.com/api/rbac/v1/roles/?limit=10&name=Catalog%20Administrator&scope=account&add_fields=groups_in
