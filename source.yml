@@ -5,9 +5,9 @@
   gather_facts: false
 
   vars:
-    username: username
-    password: password
-    source_name: New-Tower
+    username: 
+    password: 
+    source_name: testTower-1 
 
   tasks:
 

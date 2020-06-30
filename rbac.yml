@@ -5,8 +5,8 @@
   gather_facts: false
 
   vars:
-    username: username
-    password: password
+    username: 
+    password: 
     catalog_admin_group: CatalogAdmin-demo
 
   tasks:
