@@ -39,4 +39,4 @@
 
   - name: Dump "Catalog Administrators" role UUI
     debug:
-      msg: "{{ catalogAdminRole }}"
+      msg: "{{ catalogAdminRole.json.data.uuid }}"
