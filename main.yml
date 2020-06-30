@@ -66,4 +66,4 @@
       body_format: json
       body:
         principals:
-          - username: {{ username }}
+          - username: "{{ username }}"
