@@ -31,22 +31,20 @@
       - "createGroup.status == 403"
       - "createGroup.status == 500"
 
-#  - name: Get {{ catalog_admin_group }}
-#    uri:
-#      url: https://cloud.redhat.com/api/rbac/v1/groups/?limit=1&name=CatalogAdmin-demo&scope=account
-#      user: "{{ username }}"
-#      password: "{{ password }}"
-#      force_basic_auth: true
-#      method: GET
-#      headers: 
-#        accept: "application/json"
-#    register: createGroup
-#    when:
-#      - createGroup is not changed
+  - name: Get {{ catalog_admin_group }}
+    uri:
+      url: https://cloud.redhat.com/api/rbac/v1/groups/?limit=1&name=CatalogAdmin-demo&scope=account
+      user: "{{ username }}"
+      password: "{{ password }}"
+      force_basic_auth: true
+      method: GET
+      headers: 
+        accept: "application/json"
+    register: adminGroup
 
   - name: Dump var
     debug:
-      var: createGroup
+      var: adminGroup
 
   - name: Get "Catalog Administrators" role
     uri:
@@ -61,7 +59,7 @@
 
   - name: Add "Catalog Administrators" role to {{ catalog_admin_group }} 
     uri:
-      url: https://cloud.redhat.com/api/rbac/v1/groups/{{ createGroup.json.uuid }}/roles/
+      url: https://cloud.redhat.com/api/rbac/v1/groups/{{ adminGroup.json.data[0].uuid }}/roles/
       user: "{{ username }}"
       password: "{{ password }}"
       force_basic_auth: true
@@ -76,7 +74,7 @@
 
   - name: Add {{ username }} to {{ catalog_admin_group }}
     uri:
-      url: https://cloud.redhat.com/api/rbac/v1/groups/{{ createGroup.json.uuid }}/principals/
+      url: https://cloud.redhat.com/api/rbac/v1/groups/{{ adminGroup.json.data[0].uuid }}/principals/
       user: "{{ username }}"
       password: "{{ password }}"
       force_basic_auth: true
