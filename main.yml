@@ -11,7 +11,7 @@
 
   tasks:
 
-- name: Create catalog admin group
+  - name: Create catalog admin group
     uri:
       url: https://cloud.redhat.com/api/rbac/v1/groups/
       user: "{{ username }}"
