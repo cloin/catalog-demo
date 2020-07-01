@@ -1,142 +1,141 @@
 ---
-- name: Create new source in Automation Services Catalog
-  hosts: localhost 
-  become: false
-  gather_facts: false
+- name: Create source
+  uri:
+    url: https://cloud.redhat.com//api/sources/v1.0/sources
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: true
+    method: POST
+    headers: 
+      accept: "application/json"
+    body_format: json
+    body:
+      name: "{{ source_name }}"
+      source_type_id: "3"
+  register: createSource
+  changed_when: "createSource.status == 201"
+  failed_when:
+    - "createSource.status == 401"
+    - "createSource.status == 403"
+    - "createSource.status == 500"
 
-  vars:
-    username: 
-    password: 
-    source_name: testTower-1 
-    tower_url: 
-    tower_username:
-    tower_password:
+- name: Get source
+  uri:
+    url: https://cloud.redhat.com//api/sources/v1.0/source_types/3/sources?limit=5&filter[name]={{ source_name | urlencode }}
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: true
+    method: GET
+    headers: 
+      accept: "application/json"
+  register: source
+  failed_when:
+    - "source.status == 404"
 
-  tasks:
+- name: Create application
+  uri:
+    url: https://cloud.redhat.com//api/sources/v1.0/applications
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: true
+    method: POST
+    headers: 
+      accept: "application/json"
+    body_format: json
+    body:
+      availability_status_error: "string"
+      source_id: "{{ source.json.data[0].id }}"
+      application_type_id: "1"
+  register: createApplication
+  changed_when: "createApplication.status == 201"
+  failed_when:
+    - "createApplication.status == 401"
+    - "createApplication.status == 403"
+    - "createApplication.status == 500"
 
-  - name: Create source
-    uri:
-      url: https://cloud.redhat.com//api/sources/v1.0/sources
-      user: "{{ username }}"
-      password: "{{ password }}"
-      force_basic_auth: true
-      method: POST
-      headers: 
-        accept: "application/json"
-      body_format: json
-      body:
-        name: "{{ source_name }}"
-        source_type_id: "3"
-    register: createSource
-    changed_when: "createSource.status == 201"
-    failed_when:
-      - "createSource.status == 401"
-      - "createSource.status == 403"
-      - "createSource.status == 500"
+- name: Create endpoint
+  uri:
+    url: https://cloud.redhat.com//api/sources/v1.0/endpoints
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: true
+    method: POST
+    headers: 
+      accept: "application/json"
+    body_format: json
+    body:
+      default: true
+      host: "{{ tower_url }}"
+      path: "/"
+      port: "443"
+      role: "ansible"
+      scheme: "https"
+      verify_ssl: false
+      source_id: "{{ source.json.data[0].id }}"
+  register: createEndpoint
+  changed_when: "createEndpoint.status == 201"
+  failed_when:
+    - "createEndpoint.status == 401"
+    - "createEndpoint.status == 403"
+    - "createEndpoint.status == 500"
 
-  - name: Get source
-    uri:
-      url: https://cloud.redhat.com//api/sources/v1.0/source_types/3/sources?limit=5&filter[name]={{ source_name | urlencode }}
-      user: "{{ username }}"
-      password: "{{ password }}"
-      force_basic_auth: true
-      method: GET
-      headers: 
-        accept: "application/json"
-    register: source
-    failed_when:
-      - "source.status == 404"
+- name: Get endpoint
+  uri:
+    url: https://cloud.redhat.com//api/sources/v1.0/endpoints?limit=5&filter[host]={{ tower_url }}
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: true
+    method: GET
+    headers: 
+      accept: "application/json"
+  register: endpoint
 
-  - name: Create application
-    uri:
-      url: https://cloud.redhat.com//api/sources/v1.0/applications
-      user: "{{ username }}"
-      password: "{{ password }}"
-      force_basic_auth: true
-      method: POST
-      headers: 
-        accept: "application/json"
-      body_format: json
-      body:
-        availability_status_error: "string"
-        source_id: "{{ source.json.data[0].id }}"
-        application_type_id: "1"
-    register: createApplication
-    changed_when: "createApplication.status == 201"
-    failed_when:
-      - "createApplication.status == 401"
-      - "createApplication.status == 403"
-      - "createApplication.status == 500"
+- name: Create authentication
+  uri:
+    url: https://cloud.redhat.com//api/sources/v1.0/authentications
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: true
+    method: POST
+    headers: 
+      accept: "application/json"
+    body_format: json
+    body:
+      authtype: "username_password"
+      name: "Tower Password"
+      username: "{{ tower_username }}"
+      password: "{{ tower_password }}"
+      resource_type: "Endpoint"
+      resource_id: "{{ endpoint.json.data[0].id }}"
+  register: createAuthentication
+  changed_when: "createAuthentication.status == 201"
+  failed_when:
+    - "createAuthentication.status == 401"
+    - "createAuthentication.status == 403"
+    - "createAuthentication.status == 500"
 
-  - name: Create endpoint
-    uri:
-      url: https://cloud.redhat.com//api/sources/v1.0/endpoints
-      user: "{{ username }}"
-      password: "{{ password }}"
-      force_basic_auth: true
-      method: POST
-      headers: 
-        accept: "application/json"
-      body_format: json
-      body:
-        default: true
-        host: "{{ tower_url }}"
-        path: "/"
-        port: "443"
-        role: "ansible"
-        scheme: "https"
-        verify_ssl: false
-        source_id: "{{ source.json.data[0].id }}"
-    register: createEndpoint
-    changed_when: "createEndpoint.status == 201"
-    failed_when:
-      - "createEndpoint.status == 401"
-      - "createEndpoint.status == 403"
-      - "createEndpoint.status == 500"
+- name: Run availability check
+  uri:
+    url: https://cloud.redhat.com//api/sources/v1.0/sources/{{ source.json.data[0].id }}/check_availability
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: true
+    method: POST
+    headers: 
+      accept: "application/json"
+  register: availability
 
-  - name: Get endpoint
-    uri:
-      url: https://cloud.redhat.com//api/sources/v1.0/endpoints?limit=5&filter[host]={{ tower_url }}
-      user: "{{ username }}"
-      password: "{{ password }}"
-      force_basic_auth: true
-      method: GET
-      headers: 
-        accept: "application/json"
-    register: endpoint
-
-  - name: Create authentication
-    uri:
-      url: https://cloud.redhat.com//api/sources/v1.0/authentications
-      user: "{{ username }}"
-      password: "{{ password }}"
-      force_basic_auth: true
-      method: POST
-      headers: 
-        accept: "application/json"
-      body_format: json
-      body:
-        authtype: "username_password"
-        name: "Tower Password"
-        username: "{{ tower_username }}"
-        password: "{{ tower_password }}"
-        resource_type: "Endpoint"
-        resource_id: "{{ endpoint.json.data[0].id }}"
-    register: createAuthentication
-    changed_when: "createAuthentication.status == 201"
-    failed_when:
-      - "createAuthentication.status == 401"
-      - "createAuthentication.status == 403"
-      - "createAuthentication.status == 500"
-
-  - name: Run availability check
-    uri:
-      url: https://cloud.redhat.com//api/sources/v1.0/sources/{{ source.json.data[0].id }}/check_availability
-      user: "{{ username }}"
-      password: "{{ password }}"
-      force_basic_auth: true
-      method: POST
-      headers: 
-        accept: "application/json"
-    register: availability
+- name: Wait for source to populate
+  uri:
+    url: https://cloud.redhat.com/api/topological-inventory/v1.0/sources/{{ source.json.data[0].id }}/service_offerings
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: true
+    method: GET
+    headers: 
+      accept: "application/json"
+  register: services
+  until: services.status == 200
+  retries: 60
+  delay: 60
 

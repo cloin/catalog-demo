@@ -1,83 +1,71 @@
 ---
-- name: RBAC setup for Automation Services Catalog demo
-  hosts: localhost 
-  become: false
-  gather_facts: false
+- name: Create catalog admin group
+  uri:
+    url: https://cloud.redhat.com/api/rbac/v1/groups/
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: true
+    method: POST
+    headers: 
+      accept: "application/json"
+    body_format: json
+    body:
+      name: "{{ catalog_admin_group }}"
+      description: "A group of catalog admins created for demo purposes"
+  register: createGroup
+  changed_when: "createGroup.status == 201"
+  failed_when: 
+    - "createGroup.status == 401"
+    - "createGroup.status == 403"
+    - "createGroup.status == 500"
 
-  vars:
-    username: 
-    password: 
-    catalog_admin_group: CatalogAdmin-demo
+- name: Get {{ catalog_admin_group }}
+  uri:
+    url: https://cloud.redhat.com/api/rbac/v1/groups/?limit=1&name=CatalogAdmin-demo&scope=account
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: true
+    method: GET
+    headers: 
+      accept: "application/json"
+  register: adminGroup
 
-  tasks:
+- name: Get "Catalog Administrators" role
+  uri:
+    url: https://cloud.redhat.com/api/rbac/v1/roles/?limit=10&name=Catalog%20Administrator&scope=account&add_fields=groups_in
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: true
+    method: GET
+    headers: 
+      accept: "application/json"
+  register: catalogAdminRole
 
-  - name: Create catalog admin group
-    uri:
-      url: https://cloud.redhat.com/api/rbac/v1/groups/
-      user: "{{ username }}"
-      password: "{{ password }}"
-      force_basic_auth: true
-      method: POST
-      headers: 
-        accept: "application/json"
-      body_format: json
-      body:
-        name: "{{ catalog_admin_group }}"
-        description: "A group of catalog admins created for demo purposes"
-    register: createGroup
-    changed_when: "createGroup.status == 201"
-    failed_when: 
-      - "createGroup.status == 401"
-      - "createGroup.status == 403"
-      - "createGroup.status == 500"
+- name: Add "Catalog Administrators" role to {{ catalog_admin_group }} 
+  uri:
+    url: https://cloud.redhat.com/api/rbac/v1/groups/{{ adminGroup.json.data[0].uuid }}/roles/
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: true
+    method: POST
+    headers: 
+      accept: "application/json"
+    body_format: json
+    body:
+      roles:
+        - "{{ catalogAdminRole.json.data[0].uuid }}"
+  register: addRole
 
-  - name: Get {{ catalog_admin_group }}
-    uri:
-      url: https://cloud.redhat.com/api/rbac/v1/groups/?limit=1&name=CatalogAdmin-demo&scope=account
-      user: "{{ username }}"
-      password: "{{ password }}"
-      force_basic_auth: true
-      method: GET
-      headers: 
-        accept: "application/json"
-    register: adminGroup
-
-  - name: Get "Catalog Administrators" role
-    uri:
-      url: https://cloud.redhat.com/api/rbac/v1/roles/?limit=10&name=Catalog%20Administrator&scope=account&add_fields=groups_in
-      user: "{{ username }}"
-      password: "{{ password }}"
-      force_basic_auth: true
-      method: GET
-      headers: 
-        accept: "application/json"
-    register: catalogAdminRole
-
-  - name: Add "Catalog Administrators" role to {{ catalog_admin_group }} 
-    uri:
-      url: https://cloud.redhat.com/api/rbac/v1/groups/{{ adminGroup.json.data[0].uuid }}/roles/
-      user: "{{ username }}"
-      password: "{{ password }}"
-      force_basic_auth: true
-      method: POST
-      headers: 
-        accept: "application/json"
-      body_format: json
-      body:
-        roles:
-          - "{{ catalogAdminRole.json.data[0].uuid }}"
-    register: addRole
-
-  - name: Add {{ username }} to {{ catalog_admin_group }}
-    uri:
-      url: https://cloud.redhat.com/api/rbac/v1/groups/{{ adminGroup.json.data[0].uuid }}/principals/
-      user: "{{ username }}"
-      password: "{{ password }}"
-      force_basic_auth: true
-      method: POST
-      headers: 
-        accept: "application/json"
-      body_format: json
-      body:
-        principals:
-          - username: "{{ username }}"
+- name: Add {{ username }} to {{ catalog_admin_group }}
+  uri:
+    url: https://cloud.redhat.com/api/rbac/v1/groups/{{ adminGroup.json.data[0].uuid }}/principals/
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: true
+    method: POST
+    headers: 
+      accept: "application/json"
+    body_format: json
+    body:
+      principals:
+        - username: "{{ username }}"

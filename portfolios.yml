@@ -1,77 +1,63 @@
 ---
-- name: Create new source in Automation Services Catalog
-  hosts: localhost 
-  become: false
-  gather_facts: false
+- name: Create portfolio
+  uri:
+    url: https://cloud.redhat.com//api/catalog/v1.1/portfolios
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: true
+    method: POST
+    headers: 
+      accept: "application/json"
+    body_format: json
+    body:
+      name: "{{ portfolio_name }}"
+      description: "{{ portfolio_desc }}"
+  register: createPortfolio
+  changed_when: "createPortfolio.status == 201"
+  failed_when:
+    - "createPortfolio.status == 401"
+    - "createPortfolio.status == 403"
+    - "createPortfolio.status == 500"
 
-  vars:
-    username: 
-    password: 
-    portfolio_name: Demo Portfolio
-    portfolio_desc: This Portfolio was created for a demo
-    job_template_name: INFRASTRUCTURE / Turn off IBM Community Grid
+- name: Get portfolio
+  uri:
+    url: https://cloud.redhat.com//api/catalog/v1.1/portfolios?limit=5&filter[name]={{ portfolio_name | urlencode }} 
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: true
+    method: GET
+    headers:
+      accept: "application/json"
+  register: portfolio
 
-  tasks:
+- name: Get service offerings
+  uri:
+    url: https://cloud.redhat.com/api/topological-inventory/v1.0/sources/{{ source.json.data[0].id }}/service_offerings?limit=5&filter[name]={{ job_template_name | urlencode }}
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: true
+    method: GET
+    headers:
+      accept: "application/json"
+  register: service
 
-  - name: Create portfolio
-    uri:
-      url: https://cloud.redhat.com//api/catalog/v1.1/portfolios
-      user: "{{ username }}"
-      password: "{{ password }}"
-      force_basic_auth: true
-      method: POST
-      headers: 
-        accept: "application/json"
-      body_format: json
-      body:
-        name: "{{ portfolio_name }}"
-        description: "{{ portfolio_desc }}"
-    register: createPortfolio
-    changed_when: "createPortfolio.status == 201"
-    failed_when:
-      - "createPortfolio.status == 401"
-      - "createPortfolio.status == 403"
-      - "createPortfolio.status == 500"
-
-  - name: Get portfolio
-    uri:
-      url: https://cloud.redhat.com//api/catalog/v1.1/portfolios?limit=5&filter[name]={{ portfolio_name | urlencode }} 
-      user: "{{ username }}"
-      password: "{{ password }}"
-      force_basic_auth: true
-      method: GET
-      headers:
-        accept: "application/json"
-    register: portfolio
-
-  - name: Get service offerings
-    uri:
-      url: https://cloud.redhat.com/api/topological-inventory/v1.0/sources/87246/service_offerings?limit=5&filter[name]={{ job_template_name | urlencode }}
-      user: "{{ username }}"
-      password: "{{ password }}"
-      force_basic_auth: true
-      method: GET
-      headers:
-        accept: "application/json"
-    register: service
-
-  - name: Create portfolio item
-    uri:
-      url: https://cloud.redhat.com//api/catalog/v1.1/portfolio_items
-      user: "{{ username }}"
-      password: "{{ password }}"
-      force_basic_auth: true
-      method: POST
-      headers: 
-        accept: "application/json"
-      body_format: json
-      body:
-        portfolio_id: "{{ portfolio.json.data[0].id }}"
-        service_offering_ref: "{{ service.json.data[0].id }}"
-    register: createPortfolioItem
-    changed_when: "createPortfolioItem.status == 201"
-    failed_when:
-      - "createPortfolioItem.status == 400"
-      - "createPortfolioItem.status == 401"
-      - "createPortfolioItem.status == 403"
-      - "createPortfolioItem.status == 404"
+- name: Create portfolio item
+  uri:
+    url: https://cloud.redhat.com//api/catalog/v1.1/portfolio_items
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: true
+    method: POST
+    headers: 
+      accept: "application/json"
+    body_format: json
+    body:
+      portfolio_id: "{{ portfolio.json.data[0].id }}"
+      service_offering_ref: "{{ service.json.data[0].id }}"
+  register: createPortfolioItem
+  changed_when: "createPortfolioItem.status == 201"
+  failed_when:
+    - "createPortfolioItem.status == 400"
+    - "createPortfolioItem.status == 401"
+    - "createPortfolioItem.status == 403"
+    - "createPortfolioItem.status == 404"

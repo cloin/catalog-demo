@@ -1,0 +1,28 @@
+---
+- name: Setup Automation Services Catalog demo
+  hosts: localhost 
+  become: false
+  gather_facts: false
+
+  vars:
+    username: 
+    password: 
+    catalog_admin_group: CatalogAdmin-demo
+    source_name: testTower-1 
+    tower_url: 
+    tower_username:
+    tower_password:
+    portfolio_name: Demo Portfolio
+    portfolio_desc: This Portfolio was created for a demo
+    job_template_name: INFRASTRUCTURE / Turn off IBM Community Grid
+
+  tasks:
+    - name: Configure RBAC
+      include_tasks: rbac.yml
+
+    - name: Configure Tower as source
+      include_tasks: sources.yml
+
+#    - name: Create portfolio
+#      include_tasks: portfolios.yml
+
