@@ -9,6 +9,8 @@
     password: 
     source_name: testTower-1 
     tower_url: 
+    tower_username:
+    tower_password:
 
   tasks:
 
@@ -115,8 +117,8 @@
       body:
         authtype: "username_password"
         name: "Tower Password"
-        username: "{{ username }}"
-        password: "{{ password }}"
+        username: "{{ tower_username }}"
+        password: "{{ tower_password }}"
         resource_type: "Endpoint"
         resource_id: "{{ endpoint.json.data[0].id }}"
     register: createAuthentication
