@@ -124,6 +124,7 @@
     headers: 
       accept: "application/json"
   register: availability
+  failed_when: "availability.status != 202"
 
 - name: Wait for source to populate
   uri:
@@ -135,7 +136,7 @@
     headers: 
       accept: "application/json"
   register: services
-  until: services.status == 200
+  until: "services.status == 200"
   retries: 60
   delay: 60
 
