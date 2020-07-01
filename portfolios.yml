@@ -9,6 +9,7 @@
     password: 
     portfolio_name: Demo Portfolio
     portfolio_desc: This Portfolio was created for a demo
+    job_template_name: INFRASTRUCTURE / Turn off IBM Community Grid
 
   tasks:
 
@@ -45,7 +46,7 @@
 
   - name: Get service offerings
     uri:
-      url: https://cloud.redhat.com/api/topological-inventory/v1.0/sources/87246/service_offerings?filter[archived_at][nil]&limit=50&offset=0
+      url: https://cloud.redhat.com/api/topological-inventory/v1.0/sources/87246/service_offerings?limit=5&filter[name]={{ job_template_name | urlencode }}
       user: "{{ username }}"
       password: "{{ password }}"
       force_basic_auth: true
