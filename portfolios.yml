@@ -53,4 +53,25 @@
       method: GET
       headers:
         accept: "application/json"
-    register: services
+    register: service
+
+  - name: Create portfolio item
+    uri:
+      url: https://cloud.redhat.com//api/catalog/v1.1/portfolio_items
+      user: "{{ username }}"
+      password: "{{ password }}"
+      force_basic_auth: true
+      method: POST
+      headers: 
+        accept: "application/json"
+      body_format: json
+      body:
+        portfolio_id: "{{ portfolio.json.data[0].id }}"
+        service_offering_ref: "{{ service.json.data[0].id }}"
+    register: createPortfolioItem
+    changed_when: "createPortfolioItem.status == 201"
+    failed_when:
+      - "createPortfolioItem.status == 400"
+      - "createPortfolioItem.status == 401"
+      - "createPortfolioItem.status == 403"
+      - "createPortfolioItem.status == 404"
