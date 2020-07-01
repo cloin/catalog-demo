@@ -33,3 +33,13 @@
       - "createPortfolio.status == 403"
       - "createPortfolio.status == 500"
 
+  - name: Get portfolio
+    uri:
+      url: https://cloud.redhat.com//api/catalog/v1.1/portfolios?limit=5&filter[name]={{ portfolio_name | urlencode }} 
+      user: "{{ username }}"
+      password: "{{ password }}"
+      force_basic_auth: true
+      method: GET
+      headers:
+        accept: "application/json"
+    register: portfolio
