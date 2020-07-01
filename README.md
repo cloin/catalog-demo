@@ -9,4 +9,4 @@ files are named after the API documented at https://cloud.redhat.com/docs/api/
 
 `portfolios` creates a new portfolio and adds a job template from the Tower as a portfolio item
 
-This playbook relies on a harder to find API documented [here](https://cloud.redhat.com/api/topological-inventory/v3.0/openapi.json). We can probably reuse this to check progress of the collector populated job templates on the platform created in `sources.yml`
+This playbook relies on a harder to find API documented [here](https://cloud.redhat.com/api/topological-inventory/v3.0/openapi.json). I also check to see if the Platform created has an Templates yet in `sources.yml` by using `/sources/{id}/service_offerings` before trying to create a Portfolio
