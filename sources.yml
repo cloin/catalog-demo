@@ -79,6 +79,7 @@
         accept: "application/json"
       body_format: json
       body:
+        default: true
         host: "{{ tower_url }}"
         path: "/"
         port: "443"
