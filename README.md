@@ -5,3 +5,6 @@ files are named after the API documented at https://cloud.redhat.com/docs/api/
 
 
 `sources` configures a Platform from specified Tower
+
+
+`portfolios` creates a new portfolio and adds a job template from the Tower as a portfolio item
