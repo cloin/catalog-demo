@@ -23,6 +23,6 @@
     - name: Configure Tower as source
       include_tasks: sources.yml
 
-#    - name: Create portfolio
-#      include_tasks: portfolios.yml
+    - name: Create portfolio
+      include_tasks: portfolios.yml
 
