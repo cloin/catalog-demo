@@ -25,7 +25,6 @@
       body:
         name: "{{ portfolio_name }}"
         description: "{{ portfolio_desc }}"
-        enabled: true
     register: createPortfolio
     changed_when: "createPortfolio.status == 201"
     failed_when:
