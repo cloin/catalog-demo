@@ -126,7 +126,7 @@
   register: availability
   failed_when: "availability.status != 202"
 
-- name: Wait for source to populate
+- name: Wait for source to populate (may take 10-60 mins)
   uri:
     url: https://cloud.redhat.com/api/topological-inventory/v1.0/sources/{{ source.json.data[0].id }}/service_offerings
     user: "{{ username }}"
@@ -136,7 +136,9 @@
     headers: 
       accept: "application/json"
   register: services
-  until: "services.status == 200"
-  retries: 60
-  delay: 60
+  until: 
+    - "services.status == 200"
+    - "service.json.meta.count > 0"
+  retries: 120
+  delay: 30
 
