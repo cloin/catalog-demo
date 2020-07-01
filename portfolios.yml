@@ -42,3 +42,14 @@
       headers:
         accept: "application/json"
     register: portfolio
+
+  - name: Get service offerings
+    uri:
+      url: https://cloud.redhat.com/api/topological-inventory/v1.0/sources/87246/service_offerings?filter[archived_at][nil]&limit=50&offset=0
+      user: "{{ username }}"
+      password: "{{ password }}"
+      force_basic_auth: true
+      method: GET
+      headers:
+        accept: "application/json"
+    register: services
