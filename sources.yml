@@ -138,7 +138,7 @@
   register: services
   until: 
     - "services.status == 200"
-    - "service.json.meta.count > 0"
+    - "services.json.meta.count > 0"
   retries: 120
   delay: 30
 
