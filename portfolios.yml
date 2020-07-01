@@ -40,6 +40,9 @@
     headers:
       accept: "application/json"
   register: service
+  until: "service.json.meta.count > 0"
+  retries: 120
+  delay: 5
 
 - name: Create portfolio item
   uri:
