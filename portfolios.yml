@@ -1,0 +1,35 @@
+---
+- name: Create new source in Automation Services Catalog
+  hosts: localhost 
+  become: false
+  gather_facts: false
+
+  vars:
+    username: 
+    password: 
+    portfolio_name: Demo Portfolio
+    portfolio_desc: This Portfolio was created for a demo
+
+  tasks:
+
+  - name: Create portfolio
+    uri:
+      url: https://cloud.redhat.com//api/catalog/v1.1/portfolios
+      user: "{{ username }}"
+      password: "{{ password }}"
+      force_basic_auth: true
+      method: POST
+      headers: 
+        accept: "application/json"
+      body_format: json
+      body:
+        name: "{{ portfolio_name }}"
+        description: "{{ portfolio_desc }}"
+        enabled: true
+    register: createPortfolio
+    changed_when: "createPortfolio.status == 201"
+    failed_when:
+      - "createPortfolio.status == 401"
+      - "createPortfolio.status == 403"
+      - "createPortfolio.status == 500"
+
