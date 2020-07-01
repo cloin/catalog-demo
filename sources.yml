@@ -127,3 +127,15 @@
       - "createAuthentication.status == 401"
       - "createAuthentication.status == 403"
       - "createAuthentication.status == 500"
+
+  - name: Run availability check
+    uri:
+      url: https://cloud.redhat.com//api/sources/v1.0/sources/{{ source.json.data[0].id }}/check_availability
+      user: "{{ username }}"
+      password: "{{ password }}"
+      force_basic_auth: true
+      method: POST
+      headers: 
+        accept: "application/json"
+    register: availability
+
